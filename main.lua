@@ -1,27 +1,27 @@
 require("person")
 require("influence")
 
+debug = true
+
 -- Do all startup here
 function love.load()
   window_w = love.graphics.getWidth()
   window_h = love.graphics.getHeight()
-  print("window=("..window_w..","..window_h..")")
 
   objects = {}
   objects.people = {}
-  influence = Influence:Create(4, 4, window_w, window_h)
+  influence = Influence:Create(32, 32, window_w, window_h)
 
   for i=1, 20 do
     local x = love.math.random(window_w - Person.width)
     local y = love.math.random(window_h - Person.height)
     
-    objects.people[i] = Person:Create(x, y, 1)
+    objects.people[i] = Person:Create(x, y, -1, 1)
     --objects.people[i] = Person:Create(window_w/2, window_h/2, 1)
   end
   
   influence:Update(objects)
 
-  image = love.graphics.newImage(Person.image)
   love.graphics.setNewFont(12)
   love.graphics.setBackgroundColor(200,200,200)
 end
@@ -55,26 +55,49 @@ function love.update(dt)
     person.x = person.x + step
   end
 
-  if(person.x + Person.width > window_w or person.x < 0) then
-    person.x = old_x
-  end
+  person.x = math.max(person.x, Person.width/2)
+  person.x = math.min(person.x, window_w - Person.width/2)
 
-  if(person.y + Person.height > window_h or person.y < 0) then
-    person.y = old_y
-  end
-
-  
-  for i, person in ipairs(objects.people) do
-    love.graphics.draw(image, person.x, person.y)
-  end
+  person.y = math.max(person.y, Person.height/2)
+  person.y = math.min(person.y, window_h - Person.height/2)
 
 end
 
 -- Draw ONLY happens here
 function love.draw()
-  for i, person in ipairs(objects.people) do
-    love.graphics.draw(image, person.x, person.y)
+  local maxValue = -math.huge;
+  local minValue = math.huge;
+
+  for x, column in ipairs(influence.map) do
+    for y, cell in ipairs(column) do
+        local value = influence.map[x][y]
+        maxValue = math.max(maxValue, value)
+        minValue = math.min(minValue, value)
+    end
   end
+
+  local proportion = 255 / (maxValue-minValue)
+
+  if(debug) then
+    for x, column in ipairs(influence.map) do
+        for y, cell in ipairs(column) do
+            local value = influence.map[x][y]
+            local color = (value - minValue) * proportion
+            local position = influence:GetStartPositionFromTile(x, y)
+            local size = influence:GetTileSize()
+            love.graphics.setColor(color, color, color, 127)
+            love.graphics.rectangle("fill", position.x, position.y, size.w, size.h)
+
+            love.graphics.setColor(0, 0, color)
+            love.graphics.print(value, position.x, position.y)
+        end
+    end
+  end
+
+    for i, person in ipairs(objects.people) do
+      person.draw(image)
+    end
+  
 end
 
 -- Mouse pressed!
@@ -94,8 +117,10 @@ end
 
 -- Read the keyboard!
 function love.keypressed(key)
-  if key == 'b' then
-  elseif key == 'a' then
+  if key == 'd' then
+    debug = not debug
+  elseif key == 'f3' then
+    --do work
   end
 end
 
