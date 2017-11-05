@@ -1,5 +1,3 @@
-require("influence")
-
 Person = {}
 Person.image = "/assets/images/person.png"
 Person.width = 32
@@ -13,9 +11,7 @@ function Person:Create(x, y, influence)
         influence = influence
     }
 
-    function this:Move(influence)
-      direction = influence:GetDirection(this)
-
+    function this:Move(direction)
       --TODO: MAKE IT WALK IN OTHER VELOCITY
       self.x = self.x + direction.x;
       self.y = self.y + direction.y;

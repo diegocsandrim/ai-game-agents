@@ -5,21 +5,20 @@ require("influence")
 function love.load()
   window_w = love.graphics.getWidth()
   window_h = love.graphics.getHeight()
-  
+  print("window=("..window_w..","..window_h..")")
+
   objects = {}
   objects.people = {}
-  influence = Influence:Create(128, 128, window_w, window_h)
+  influence = Influence:Create(4, 4, window_w, window_h)
 
-  for i=1, 20 + 1 do
+  for i=1, 20 do
     local x = love.math.random(window_w - Person.width)
     local y = love.math.random(window_h - Person.height)
     
     objects.people[i] = Person:Create(x, y, 1)
+    --objects.people[i] = Person:Create(window_w/2, window_h/2, 1)
   end
   
-  objects.players = {}
-  objects.player.first = Person:Create(window_w/2, window_h/2, 1)
-
   influence:Update(objects)
 
   image = love.graphics.newImage(Person.image)
@@ -31,9 +30,11 @@ end
 function love.update(dt)
   influence:Update(objects)
 
-  for i=1,#objects.people do
+  for i=2,#objects.people do
     local person = objects.people[i]
-    person:Move(influence)    
+    local direction = influence:GetDirection(person)
+
+    person:Move(direction)    
   end
 
   local step = 1
