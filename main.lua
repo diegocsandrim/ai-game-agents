@@ -1,34 +1,111 @@
 require("person")
+require("seat")
+require("wall")
+require("platform")
 require("influence")
+require("parameter")
 
-debug = true
+param = Parameter:create()
+objects = {}
 
 -- Do all startup here
 function love.load()
   window_w = love.graphics.getWidth()
   window_h = love.graphics.getHeight()
 
-  objects = {}
-  objects.people = {}
-  influence = Influence:Create(32, 32, window_w, window_h)
+  createObjects()
 
-  for i=1, 20 do
-    local x = love.math.random(window_w - Person.width)
-    local y = love.math.random(window_h - Person.height)
-    
-    objects.people[i] = Person:Create(x, y, -1, 1)
-    --objects.people[i] = Person:Create(window_w/2, window_h/2, 1)
-  end
-  
+  influence = Influence:Create(param.influence.size.x, param.influence.size.y, window_w, window_h)
   influence:Update(objects)
 
   love.graphics.setNewFont(12)
   love.graphics.setBackgroundColor(200,200,200)
 end
 
+function createObjects()
+  objects.people = {}
+
+  for i=1, param.person.quantity do
+    local x = love.math.random(window_w - Person.width)
+    local y = love.math.random(window_h - Person.height)
+
+    local tiredThreshold = love.math.random(10, 20)
+    objects.people[i] = Person:Create(x, y, param.person.influence, param.person.minStaticInfluence, param.person.influenceDist, tiredThreshold)
+  end
+
+  objMap = {}
+
+  objMap[01] = {3,3,3,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,3,3,3}
+  objMap[02] = {3,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0,3}
+  objMap[03] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[04] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[05] = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3}
+  objMap[06] = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3}
+  objMap[07] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[08] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[09] = {3,0,0,0,0,0,2,1,1,0,0,0,1,1,2,0,0,0,0,0,3}
+  objMap[10] = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3}
+  objMap[11] = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3}
+  objMap[12] = {3,0,0,0,0,0,2,1,1,0,0,0,1,1,2,0,0,0,0,0,3}
+  objMap[13] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[14] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[15] = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3}
+  objMap[16] = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3}
+  objMap[17] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[18] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[19] = {3,0,0,0,0,0,2,1,1,0,0,0,1,1,2,0,0,0,0,0,3}
+  objMap[20] = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3}
+  objMap[21] = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3}
+  objMap[22] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[23] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[24] = {3,0,0,0,0,0,2,1,1,0,0,0,1,1,2,0,0,0,0,0,3}
+  objMap[25] = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3}
+  objMap[26] = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3}
+  objMap[27] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[28] = {3,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,3}
+  objMap[29] = {3,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0,3}
+  objMap[30] = {3,3,3,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,3,3,3}
+
+
+
+  objects.seats = {}
+  objects.walls = {}
+  objects.platforms = {}
+
+  influencew = window_w / param.influence.size.x
+  influenceh = window_h / param.influence.size.y
+
+  diffx = math.ceil(Seat.width / influencew) * influencew
+  diffy = math.ceil(Seat.height / influenceh) * influenceh
+
+  startatx = influencew * 3 + influencew/2
+  startaty = influenceh * 20 + influenceh/2
+
+  seatsIndex = 0
+  wallIndex = 0
+  pratformIndex = 0
+  for i, column in ipairs(objMap) do
+    for j, type in ipairs(column) do
+      if(type == 1) then
+        seatsIndex = seatsIndex + 1
+        objects.seats[seatsIndex] = Seat:Create((i - 1) * influencew + influencew / 2, (j - 1) * influenceh + influenceh / 2, param.seat.influence, param.seat.influenceDist)
+      elseif(type == 2) then
+        wallIndex = wallIndex + 1
+        objects.walls[wallIndex] = Wall:Create((i - 1) * influencew, (j - 1) * influenceh, param.wall.influence, param.wall.influenceDist)
+      elseif(type == 3) then
+        pratformIndex = pratformIndex + 1
+        objects.platforms[pratformIndex] = Platform:Create((i - 1) * influencew, (j - 1) * influenceh, param.platform.influence, param.platform.influenceDist)
+      else
+      end
+    end
+  end
+
+end
+
 -- Update the things here
 function love.update(dt)
   influence:Update(objects)
+  
 
   for i=2,#objects.people do
     local person = objects.people[i]
@@ -37,7 +114,7 @@ function love.update(dt)
     person:Move(direction)    
   end
 
-  local step = 1
+  local step = 3
   local person = objects.people[1]
   local old_x = person.x
   local old_y = person.y
@@ -64,39 +141,44 @@ function love.update(dt)
 end
 
 -- Draw ONLY happens here
-function love.draw()
-  local maxValue = -math.huge;
-  local minValue = math.huge;
+function love.draw() 
+        
+  love.graphics.setColor(0,0,0,255)
+  for i, wall in ipairs(objects.walls) do
+    wall.draw()
+  end
+  love.graphics.setColor(255,255,255,255)
 
-  for x, column in ipairs(influence.map) do
-    for y, cell in ipairs(column) do
-        local value = influence.map[x][y]
-        maxValue = math.max(maxValue, value)
-        minValue = math.min(minValue, value)
-    end
+  for i, seat in ipairs(objects.seats) do
+    seat.draw()
   end
 
+  for i, person in ipairs(objects.people) do
+    person.draw()
+  end
+
+  
+  local minValue = -50
+  local maxValue = 50            
   local proportion = 255 / (maxValue-minValue)
 
-  if(debug) then
+  if(param.debug) then
     for x, column in ipairs(influence.map) do
         for y, cell in ipairs(column) do
+
             local value = influence.map[x][y]
             local color = (value - minValue) * proportion
+            color = math.min(255, color)
+            color = math.max(0, color)
+
             local position = influence:GetStartPositionFromTile(x, y)
             local size = influence:GetTileSize()
             love.graphics.setColor(color, color, color, 127)
             love.graphics.rectangle("fill", position.x, position.y, size.w, size.h)
-
-            love.graphics.setColor(0, 0, color)
-            love.graphics.print(value, position.x, position.y)
         end
     end
+    love.graphics.setColor(255,255,255,255)
   end
-
-    for i, person in ipairs(objects.people) do
-      person.draw(image)
-    end
   
 end
 
@@ -118,7 +200,7 @@ end
 -- Read the keyboard!
 function love.keypressed(key)
   if key == 'd' then
-    debug = not debug
+    param.debug = not param.debug
   elseif key == 'f3' then
     --do work
   end

@@ -31,13 +31,18 @@ function Influence:Create(w, h, window_w, window_h)
         print()
     end
     
-    function this:GetPersonInfluence(person, x, y)
-        local personTile = this:GetTileFromPosition(person.x,person.y)       
+    function this:GetObjectInfluence(obj, x, y)
+        local tile = this:GetTileFromPosition(obj.x, obj.y)       
 
+        local influence = 0
+        local distance = math.sqrt((tile.x - x)^2 + (tile.y - y)^2)
 
-        local distance = math.sqrt((personTile.x - x)^2 + (personTile.y - y)^2)
+        if(distance < obj.influenceDist) then            
+            influence = (1 * obj.influence)/(distance + 1)
+        else
+            influence = 0
+        end
 
-        local influence = (1 * person.influence)/(distance + 1)
         return influence
     end
 
@@ -52,7 +57,31 @@ function Influence:Create(w, h, window_w, window_h)
                 local celly = position.y
 
                 for i, person in ipairs(objects.people) do
-                    local influence = this:GetPersonInfluence(person, x, y)
+                    local influence = this:GetObjectInfluence(person, x, y)
+                    
+                    this.map[x][y] = this.map[x][y] + influence
+                end
+
+                for i, seat in ipairs(objects.seats) do
+                    local influence = 0
+                    
+                    influence = this:GetObjectInfluence(seat, x, y)
+                                        
+                    this.map[x][y] = this.map[x][y] + influence
+                end                
+
+                for i, wall in ipairs(objects.walls) do
+                    local influence = 0
+                    
+                    influence = this:GetObjectInfluence(wall, x, y)
+                    
+                    this.map[x][y] = this.map[x][y] + influence
+                end
+
+                for i, platform in ipairs(objects.platforms) do
+                    local influence = 0
+                    
+                    influence = this:GetObjectInfluence(platform, x, y)
                     
                     this.map[x][y] = this.map[x][y] + influence
                 end
@@ -76,8 +105,8 @@ function Influence:Create(w, h, window_w, window_h)
         local celly = (y-1) * window_h/h + (window_h/h)/2
         
         local position = {}
-        position.x = cellx
-        position.y = celly
+        position.x = math.floor(cellx)
+        position.y = math.floor(celly)
 
         return position
     end
@@ -125,7 +154,7 @@ function Influence:Create(w, h, window_w, window_h)
                     local cellValue = this.map[x][y]
                     
                     -- Remove my own influence from map!
-                    local ownInfluence = this:GetPersonInfluence(person, x ,y)
+                    local ownInfluence = this:GetObjectInfluence(person, x ,y)
                     
                     local othersInfluence = cellValue - ownInfluence
 
@@ -155,10 +184,21 @@ function Influence:Create(w, h, window_w, window_h)
             targety = tile.y
         end
 
-        vectorx = (targetx-tile.x)
-        vectory= (targety-tile.y)
+        local targetPosition = this:GetPositionFromTile(targetx, targety)
+
+        -- print("from ("..person.x..","..person.y..") to ("..targetPosition.x..","..targetPosition.y..")")
+
+        vectorx = (targetPosition.x-person.x)
+        vectory = (targetPosition.y-person.y)
+        
 
         norm = math.sqrt((vectorx)^2 + (vectory)^2)
+
+        -- TODO: this should not be static, it may have errors when window have different sizes
+        if(norm < 2) then
+            vectorx=0
+            vectory=0
+        end
 
         if (norm == 0) then
             versorx = 0
