@@ -2,26 +2,28 @@ require("person")
 
 Influence = {}
 
-function Influence:Create(w, h, window_w, window_h)
+function Influence:Create(w, h, window_w, window_h, map)
     local this =
     {
         w = w,
         h = h,
         window_w = window_w,
         window_h = window_h,
-        map = {}
+        map = map,
+        influenceMap = {}
     }
-    
-    for x=1,w do
-      this.map[x] = {}
-      for y=1,h do
-        this.map[x][y] = 0
-      end
+
+    function this:ClearInfluence()
+        for x=1,w do
+            this.influenceMap[x] = {}
+            for y=1,h do
+                this.influenceMap[x][y] = 0
+            end
+        end
     end
 
-
     function this:Print()
-        for x, column in ipairs(this.map) do
+        for x, column in ipairs(this.influenceMap) do
             for y, cell in ipairs(column) do
                 io.write(string.format("%.3f", cell))
                 io.write(" ")
@@ -31,14 +33,12 @@ function Influence:Create(w, h, window_w, window_h)
         print()
     end
     
-    function this:GetObjectInfluence(obj, x, y)
-        local tile = this:GetTileFromPosition(obj.x, obj.y)       
-
+    function this:GetObjectInfluence(obj, x, y, tile)
         local influence = 0
         local distance = math.sqrt((tile.x - x)^2 + (tile.y - y)^2)
 
         if(distance < obj.influenceDist) then            
-            influence = (1 * obj.influence)/(distance + 1)
+            influence = (1 * obj.influence)/(distance + 1) ^ obj.influenceDecay
         else
             influence = 0
         end
@@ -46,47 +46,30 @@ function Influence:Create(w, h, window_w, window_h)
         return influence
     end
 
-    function this:Update(objects)
-        for x, column in ipairs(this.map) do
-            for y, cell in ipairs(column) do
-                this.map[x][y] = 0
+    function this:UpdateInfluence(objects)
+        for _, object in ipairs(objects) do
+            local tile = this:GetTileFromPosition(object.x, object.y)
+            local dist = object.influenceDist
+                
+            for x=tile.x-dist,tile.x+dist do
+                for y=tile.y-dist,tile.y+dist do
+                    if (x > 0 and x <= this.w and y > 0 and y <= this.h) then
+                        local influence = this:GetObjectInfluence(object, x, y, tile)
                         
-                local position = this:GetPositionFromTile(x,y)
-
-                local cellx = position.x
-                local celly = position.y
-
-                for i, person in ipairs(objects.people) do
-                    local influence = this:GetObjectInfluence(person, x, y)
-                    
-                    this.map[x][y] = this.map[x][y] + influence
-                end
-
-                for i, seat in ipairs(objects.seats) do
-                    local influence = 0
-                    
-                    influence = this:GetObjectInfluence(seat, x, y)
-                                        
-                    this.map[x][y] = this.map[x][y] + influence
-                end                
-
-                for i, wall in ipairs(objects.walls) do
-                    local influence = 0
-                    
-                    influence = this:GetObjectInfluence(wall, x, y)
-                    
-                    this.map[x][y] = this.map[x][y] + influence
-                end
-
-                for i, platform in ipairs(objects.platforms) do
-                    local influence = 0
-                    
-                    influence = this:GetObjectInfluence(platform, x, y)
-                    
-                    this.map[x][y] = this.map[x][y] + influence
+                        this.influenceMap[x][y] = this.influenceMap[x][y] + influence
+                    end
                 end
             end
         end
+    end
+
+    function this:UpdateV2(map)
+        this:ClearInfluence()
+        this:UpdateInfluence(map.people)
+        this:UpdateInfluence(map.seats)
+        this:UpdateInfluence(map.walls)
+        this:UpdateInfluence(map.platforms)
+        this:UpdateInfluence(map.stands)
     end
     
     function this:GetTileSize(x, y)
@@ -136,14 +119,15 @@ function Influence:Create(w, h, window_w, window_h)
         return position
     end
 
-    function this:GetDirection(person)
+    function this:GetDirection(person, map)
         local tile = this:GetTileFromPosition(person.x, person.y)
         
         local tilex = tile.x
         local tiley = tile.y
 
-        local targetx = 0
-        local targety = 0
+        local targetTile = {}
+        targetTile.x = 0
+        targetTile.y = 0
         local maxValue = -math.huge
         local currentTileInfluence = -math.huge
         
@@ -151,10 +135,10 @@ function Influence:Create(w, h, window_w, window_h)
             for y=tiley-1,tiley+1 do
                 if (x > 0 and x <= w and y > 0 and y <= h) then
                     
-                    local cellValue = this.map[x][y]
+                    local cellValue = this.influenceMap[x][y]
                     
                     -- Remove my own influence from map!
-                    local ownInfluence = this:GetObjectInfluence(person, x ,y)
+                    local ownInfluence = this:GetObjectInfluence(person, x ,y, tile)
                     
                     local othersInfluence = cellValue - ownInfluence
 
@@ -164,8 +148,8 @@ function Influence:Create(w, h, window_w, window_h)
 
                     if(othersInfluence > maxValue) then
                         maxValue = othersInfluence
-                        targetx = x
-                        targety = y
+                        targetTile.x = x
+                        targetTile.y = y
                     end
                 end
             end
@@ -184,20 +168,27 @@ function Influence:Create(w, h, window_w, window_h)
             targety = tile.y
         end
 
-        local targetPosition = this:GetPositionFromTile(targetx, targety)
+        local occupied = this.map:isTileOccupied(targetTile)
+        if occupied then
+            vectorx = 0
+            vectory = 0
+        else
+        end
 
+        local targetPosition = this:GetPositionFromTile(targetTile.x, targetTile.y)
+        
         -- print("from ("..person.x..","..person.y..") to ("..targetPosition.x..","..targetPosition.y..")")
 
         vectorx = (targetPosition.x-person.x)
         vectory = (targetPosition.y-person.y)
         
-
         norm = math.sqrt((vectorx)^2 + (vectory)^2)
 
-        -- TODO: this should not be static, it may have errors when window have different sizes
-        if(norm < 2) then
-            vectorx=0
-            vectory=0
+        -- You don't need to get into the center of the incluence map, 7 px is enought
+        if(norm < 7) then
+            vectorx = 0
+            vectory = 0
+            norm = 0
         end
 
         if (norm == 0) then

@@ -16,3 +16,6 @@ love .
 TODO: [game distribution](https://love2d.org/wiki/Game_Distribution)
 
 TODO: deactivate not used modules in [conf.lua](https://love2d.org/wiki/Config_Files)
+
+TODO: PAREI AKI!
+Falta fazer as áreas de interesse no trem

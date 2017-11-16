@@ -1,8 +1,8 @@
-Platform = {}
-Platform.width = 32
-Platform.height = 32
+Stand = {}
+Stand.width = 32
+Stand.height = 32
 
-function Platform:Create(x, y, influence, influenceDist, influenceDecay)
+function Stand:Create(x, y, influence, influenceDist, influenceDecay)
     local this =
     {
         x = x,

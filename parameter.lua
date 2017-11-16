@@ -11,22 +11,31 @@ function Parameter:create()
   param.influence.size.y = 20
 
   param.person = {}
-  param.person.quantity = 100
-  param.person.influence = -9
+  param.person.quantity = 300
+  param.person.influence = -100
   param.person.minStaticInfluence = 0
-  param.person.influenceDist = 1
+  param.person.influenceDist = 10
+  param.person.influenceDecay = 5
 
   param.seat = {}
   param.seat.influence = 5
-  param.seat.influenceDist = 2
+  param.seat.influenceDist = 3
+  param.seat.influenceDecay = 1
 
   param.wall = {}
   param.wall.influence = -999
   param.wall.influenceDist = 1
+  param.wall.influenceDecay = 1
   
   param.platform = {}
   param.platform.influence = -50
-  param.platform.influenceDist = 5
+  param.platform.influenceDist = 1
+  param.platform.influenceDecay = 1
+
+  param.stand = {}
+  param.stand.influence = 1
+  param.stand.influenceDist = 10
+  param.stand.influenceDecay = 1
   
   return param
 end
