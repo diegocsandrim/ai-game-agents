@@ -7,9 +7,18 @@ Artificial intelligence in computer games homework
 Check with the command `love --version` (It must say something like _LOVE 0.10.2 (Super Toast)_)
 
 ## How to run it
-Download the code. It is easier if you have git, [get it here](https://git-scm.com/downloads):
+
+Download the code, and enter in the folder. It is easier if you have git, [get it here](https://git-scm.com/downloads):
 ```
 git clone https://github.com/diegocsandrim/ai-game-agents.git
 cd ai-game-agents
-love .
+```
+
+From your command line run:
+```
+# running the train simulation
+love train
+
+# running the game
+love game
 ```
