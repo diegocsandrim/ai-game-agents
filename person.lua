@@ -20,35 +20,27 @@ function Person:Create(x, y, influence, minStaticInfluence, influenceDist, tired
     }
 
     function this:Move(direction, param, influence)
-
-        if (this.resting or this.tired > tiredThreshold) then
-            this.resting = true
-            this.tired = this.tired / 2
-
-            if (this.tired < 1) then
-                this.resting = false
-            end
+        
+        if (direction.x == 0 and direction.y == 0) then
+            -- not to walk
+        elseif love.math.random() > 0.95 then
+            -- fail to walk
         else
-            if (direction.x == 0 and direction.y == 0) then
-                this.resting = true
-            else
-                
-                --TODO: MAKE IT WALK IN OTHER VELOCITY
-                local newX = this.x + direction.x * 3
-                local newY = this.y + direction.y * 3
+            --TODO: MAKE IT WALK IN OTHER VELOCITY
+            local newX = this.x + direction.x * 3
+            local newY = this.y + direction.y * 3
 
-                local oldTile = Util.GetTileFromPosition(this.x, this.y, param)
-                local newTile = Util.GetTileFromPosition(newX, newY, param)
+            local oldTile = Util.GetTileFromPosition(this.x, this.y, param)
+            local newTile = Util.GetTileFromPosition(newX, newY, param)
 
-                if (oldTile.x ~= newTile.x or oldTile.y ~= newTile.y) then
-                    this:notifyObservers(oldTile, newTile)
-                end
-                
-                this.x = newX
-                this.y = newY
-                
-                this.tired = this.tired + 1
+            if (oldTile.x ~= newTile.x or oldTile.y ~= newTile.y) then
+                this:notifyObservers(oldTile, newTile)
             end
+            
+            this.x = newX
+            this.y = newY
+            
+            this.tired = this.tired + 1
         end
 
     end

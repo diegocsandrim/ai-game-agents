@@ -4,6 +4,7 @@ function Parameter:create()
   local param = {}
   
   param.debug = false
+  param.velocity = 1
 
   param.influence = {}
   param.influence.size = {}

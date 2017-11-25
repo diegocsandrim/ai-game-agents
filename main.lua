@@ -16,13 +16,14 @@ function love.load()
 end
 
 local frame = 0
+
 function love.update(dt)
   frame = frame + dt
-  
-  if(frame < 0.01) then
+  local frameTime = 0.03 / state.velocity
+  if(frame < frameTime) then
     return
   else
-    frame = frame - 0.01
+    frame = frame - frameTime
   end
 
   if (state.step) then
@@ -155,6 +156,12 @@ function love.keypressed(key)
     state.step = true
   elseif key == 'r' then
     restart()
+  elseif key == '+' or key == 'kp+' then
+    state.velocity = state.velocity * 1.1
+  elseif key == '-'or key == 'kp-' then
+    state.velocity = state.velocity * 0.9
+  else
+    --print(key)
   end
 end
 
