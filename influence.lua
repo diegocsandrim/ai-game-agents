@@ -134,22 +134,25 @@ function Influence:Create(w, h, window_w, window_h, map)
         for x=tilex-1,tilex+1 do
             for y=tiley-1,tiley+1 do
                 if (x > 0 and x <= w and y > 0 and y <= h) then
-                    
-                    local cellValue = this.influenceMap[x][y]
-                    
-                    -- Remove my own influence from map!
-                    local ownInfluence = this:GetObjectInfluence(person, x ,y, tile)
-                    
-                    local othersInfluence = cellValue - ownInfluence
-
-                    if(tilex == x and tiley == y) then
-                        currentTileInfluence = othersInfluence
-                    end
-
-                    if(othersInfluence > maxValue) then
-                        maxValue = othersInfluence
-                        targetTile.x = x
-                        targetTile.y = y
+                    -- am i walking in diagonal?
+                    if(tilex ~= x and tiley ~= y) then
+                        -- skip, don't walk in diagonal
+                    else
+                        local cellValue = this.influenceMap[x][y]
+    
+                        -- Remove my own influence from map!
+                        local ownInfluence = this:GetObjectInfluence(person, x ,y, tile)                    
+                        local othersInfluence = cellValue - ownInfluence
+                        
+                        if(tilex == x and tiley == y) then
+                            currentTileInfluence = othersInfluence
+                        end
+    
+                        if(othersInfluence > maxValue) then
+                            maxValue = othersInfluence
+                            targetTile.x = x
+                            targetTile.y = y
+                        end
                     end
                 end
             end

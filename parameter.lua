@@ -18,8 +18,8 @@ function Parameter:create()
   param.person.influenceDecay = 5
 
   param.seat = {}
-  param.seat.influence = 5
-  param.seat.influenceDist = 3
+  param.seat.influence = 10
+  param.seat.influenceDist = 1
   param.seat.influenceDecay = 1
 
   param.wall = {}
