@@ -14,6 +14,7 @@ function Wall:Create(x, y, influence, influenceDist, influenceDecay)
     }
 
     function this:draw()
+        love.graphics.setColor(209,5,42,255)
         love.graphics.rectangle("fill", this.x, this.y, Wall.width, Wall.height)
     end
     

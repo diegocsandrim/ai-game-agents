@@ -16,10 +16,14 @@ function love.load()
 end
 
 local frame = 0
+local totalTime = 0
 
 function love.update(dt)
+  
+  totalTime = totalTime + dt
   frame = frame + dt
   local frameTime = 0.03 / state.velocity
+  
   if(frame < frameTime) then
     return
   else
@@ -82,8 +86,7 @@ function love.update(dt)
 end
 
 -- Draw ONLY happens here
-function love.draw() 
-        
+function love.draw()
   love.graphics.setColor(0,0,0,255)
   for i, wall in ipairs(map.walls) do
     wall.draw()
@@ -122,13 +125,45 @@ function love.draw()
   end
 
   if(state.paused) then
+    love.graphics.setColor(255,255,255,128)
+    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+
+    local x =  0
+    local y =  love.graphics.getHeight()/2
+    local limit =  love.graphics.getWidth()
+
     love.graphics.setNewFont(42)
-    love.graphics.setColor(200,0,0,255)
-    love.graphics.printf("PAUSED", 0, love.graphics.getHeight()/2, love.graphics.getWidth(), "center" )
+    love.graphics.setColor(255,0,0,255)
+    love.graphics.printf("PAUSED", x, y, love.graphics.getWidth(), "center" )
+    y = y + 150
+
+    x =love.graphics.getWidth() / 3
+    love.graphics.setNewFont(16)
+    love.graphics.setColor(255,0,0,255)
+    love.graphics.printf("Controls", x, y, love.graphics.getWidth(), "left" )
+    y = y + 16
+
+    
+    love.graphics.printf("p: pause/unpause", x, y, love.graphics.getWidth(), "left" )    
+    y = y + 16
+    --d,p,s,r,+,-
+    love.graphics.printf("d: debug, show the influence map", x, y, love.graphics.getWidth(), "left" )
+    y = y + 16
+    
+    love.graphics.printf("s: step, make small steps when paused", x, y, love.graphics.getWidth(), "left" )
+    y = y + 16
+
+    love.graphics.printf("+ or -, more or less velocity", x, y, love.graphics.getWidth(), "left" )
+    y = y + 16
 
     love.graphics.setColor(255,255,255,255)
   end
   
+  if(totalTime < 5) then
+    love.graphics.setNewFont(32)
+    love.graphics.setColor(255,0,0,255)
+    love.graphics.printf("Press p to pause", 0, 0, love.graphics.getWidth(), "left" )
+  end
 end
 
 -- Mouse pressed!
@@ -157,9 +192,9 @@ function love.keypressed(key)
   elseif key == 'r' then
     restart()
   elseif key == '+' or key == 'kp+' then
-    state.velocity = state.velocity * 1.1
+    state.velocity = state.velocity * 1.5
   elseif key == '-'or key == 'kp-' then
-    state.velocity = state.velocity * 0.9
+    state.velocity = state.velocity * 0.7
   else
     --print(key)
   end

@@ -26,7 +26,6 @@ function Person:Create(x, y, influence, minStaticInfluence, influenceDist, tired
         elseif love.math.random() > 0.95 then
             -- fail to walk
         else
-            --TODO: MAKE IT WALK IN OTHER VELOCITY
             local newX = this.x + direction.x * 3
             local newY = this.y + direction.y * 3
 
@@ -54,6 +53,7 @@ function Person:Create(x, y, influence, minStaticInfluence, influenceDist, tired
             image = Person.image
         end
 
+        love.graphics.setColor(255,255,255,255)
         love.graphics.draw(image, this.x - Person.width/2, this.y - Person.height/2)
     end
     

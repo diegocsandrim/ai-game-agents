@@ -15,6 +15,7 @@ function Seat:Create(x, y, influence, influenceDist, influenceDecay)
     }
 
     function this:draw()
+        love.graphics.setColor(0,9,88,255)
         love.graphics.draw(Seat.image, this.x - Seat.width/2, this.y - Seat.height/2)
     end
     
