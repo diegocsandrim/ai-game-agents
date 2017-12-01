@@ -6,11 +6,6 @@ function Parameter:create()
   param.debug = false
   param.velocity = 1
 
-  param.influence = {}
-  param.influence.size = {}
-  param.influence.size.x = 30
-  param.influence.size.y = 20
-
   param.person = {}
   param.person.quantity = 300
   param.person.influence = -100
@@ -37,6 +32,11 @@ function Parameter:create()
   param.stand.influence = 1
   param.stand.influenceDist = 10
   param.stand.influenceDecay = 1
+  
+  param.influence = {}
+  param.influence.size = {}
+  param.influence.size.x = 30
+  param.influence.size.y = 20
   
   return param
 end

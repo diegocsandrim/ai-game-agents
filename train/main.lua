@@ -102,8 +102,8 @@ function love.draw()
   end
 
   
-  local minValue = -50
-  local maxValue = 50            
+  local minValue = -5
+  local maxValue = 5         
   local proportion = 255 / (maxValue-minValue)
 
   if(state.debug) then
@@ -146,14 +146,21 @@ function love.draw()
     
     love.graphics.printf("p: pause/unpause", x, y, love.graphics.getWidth(), "left" )    
     y = y + 16
+    
+    love.graphics.printf("s: make small steps when paused", x, y, love.graphics.getWidth(), "left" )
+    y = y + 16
+
     --d,p,s,r,+,-
     love.graphics.printf("d: debug, show the influence map", x, y, love.graphics.getWidth(), "left" )
     y = y + 16
-    
-    love.graphics.printf("s: step, make small steps when paused", x, y, love.graphics.getWidth(), "left" )
+        
+    love.graphics.printf("r: restart the simulation", x, y, love.graphics.getWidth(), "left" )
     y = y + 16
 
     love.graphics.printf("+ or -, more or less velocity", x, y, love.graphics.getWidth(), "left" )
+    y = y + 16
+
+    love.graphics.printf("arrow up, down, left, right, control the blue person", x, y, love.graphics.getWidth(), "left" )
     y = y + 16
 
     love.graphics.setColor(255,255,255,255)
@@ -163,21 +170,6 @@ function love.draw()
     love.graphics.setNewFont(32)
     love.graphics.setColor(255,0,0,255)
     love.graphics.printf("Press p to pause", 0, 0, love.graphics.getWidth(), "left" )
-  end
-end
-
--- Mouse pressed!
-function love.mousepressed(x, y, button, istouch)
-  if button == 1 then
-     imgx = x -- move image to where mouse clicked
-     imgy = y
-  end
-end
-
--- Mouse released!
-function love.mousereleased(x, y, button, istouch)
-  if button == 1 then
-     --fireSlingshot(x,y) -- this totally awesome custom function is defined elsewhere
   end
 end
 
@@ -203,15 +195,6 @@ end
 function love.keyreleased(key)
   if key == 's' then
     state.step = false
-  end
-end
-
--- check the windows focus
-function love.focus(f)
-  if not f then
-    --print("LOST FOCUS")
-  else
-    --print("GAINED FOCUS")
   end
 end
 
