@@ -10,8 +10,11 @@ function Map:create(width, height)
   this.width = width
   this.height = height
   this.static = {}
+  this.dynamic = {}
+  this.players = {}
   this.player1 = nil
-
+  this.captured = 0
+  
   local posw = love.graphics.getWidth() / this.width
   local posh = love.graphics.getHeight() / this.height
   
@@ -40,11 +43,11 @@ function Map:create(width, height)
   this.position[02] = {0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0}
   this.position[03] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[04] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-  this.position[05] = {0,0,0,3,0,0,0,0,0,3,0,0,0,0,3,0,0,0}
+  this.position[05] = {0,0,0,4,0,0,0,0,0,4,0,0,0,0,4,0,0,0}
   this.position[06] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[07] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[08] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-  this.position[09] = {0,0,0,0,0,3,0,0,0,0,0,3,0,0,0,0,0,0}
+  this.position[09] = {0,0,0,0,0,4,0,0,0,0,0,4,0,0,0,0,0,0}
   this.position[10] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[11] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[12] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
@@ -56,12 +59,12 @@ function Map:create(width, height)
   this.position[18] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[19] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-  this.position[21] = {0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0}
+  this.position[21] = {0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0}
   this.position[22] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[23] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[24] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[25] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-  this.position[26] = {0,0,0,4,0,0,4,0,0,0,4,0,0,0,4,0,0,0}
+  this.position[26] = {0,0,0,8,0,0,8,0,0,0,8,0,0,0,8,0,0,0}
   this.position[27] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[28] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
   this.position[29] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
@@ -78,12 +81,11 @@ function Map:create(width, height)
       if(type == 1) then
         local obj = Flag:create((i-1) * scalex * posw, (j-1) * scaley * posh, 1, Flag.redImage, posw, posh)
         this.position[i][j] = obj
+        table.insert(this.dynamic, obj)
       elseif(type == 2) then
         local obj = Flag:create((i-1) * scalex * posw, (j-1) * scaley * posh, 2, Flag.blueImage, posw, posh)
         this.position[i][j] = obj
-      elseif(type == 3) then
-        local obj = Player:create((i-1) * scalex * posw, (j-1) * scaley * posh, 1, Player.redImage, posw, posh)
-        this.position[i][j] = obj
+        table.insert(this.dynamic, obj)
       elseif(type == 4) then
         local obj = nil
         
@@ -98,7 +100,15 @@ function Map:create(width, height)
           obj = Player:create((i-1) * scalex * posw, (j-1) * scaley * posh, 2, Player.blueImage, posw, posh, isBot)
         end
 
+        
         this.position[i][j] = obj
+        table.insert(this.dynamic, obj)
+        table.insert(this.players, obj)  
+      elseif(type == 8) then
+        local obj = Player:create((i-1) * scalex * posw, (j-1) * scaley * posh, 1, Player.redImage, posw, posh)
+        this.position[i][j] = obj
+        table.insert(this.dynamic, obj)
+        table.insert(this.players, obj)   
       else
         this.position[i][j] = {}
       end
@@ -144,6 +154,7 @@ function Map:create(width, height)
     end
 
     local oldLocation = {x= player.x; y= player.y}
+    local oldTile = this:getTileFromPosition(oldLocation)
     local newLocation = {x= player.x + versor.x; y= player.y + versor.y}
 
     if newLocation.x - player.posw/2 < 0 or newLocation.x > love.graphics.getWidth() - player.posw/2 then
@@ -157,12 +168,15 @@ function Map:create(width, height)
     local newTile = this:getTileFromPosition(newLocation)
     local insideTheTargetCell = this.position[newTile.x][newTile.y]
       
-    if insideTheTargetCell ~= nil and insideTheTargetCell.type == 'player' and insideTheTargetCell ~= player then
-      newLocation = oldLocation
+    if insideTheTargetCell ~= nil and insideTheTargetCell.type == 'flag' and insideTheTargetCell.team == player.team then
+      print(insideTheTargetCell.team)
+      print(player.team)
+      this.captured = player.team
     end
     
     player.x = newLocation.x
     player.y = newLocation.y
+    
   end
 
   function this:getTileFromPosition(position)
@@ -175,6 +189,12 @@ function Map:create(width, height)
     local tile = {x= xtile; y= ytile}
     
     return tile
+  end
+
+  
+  function this:isTileOccupied(tile)
+    local value = this.position[tile.x][tile.y]
+    return value.type == "player"
   end
 
   return this

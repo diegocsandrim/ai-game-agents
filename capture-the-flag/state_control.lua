@@ -23,7 +23,6 @@ function StateControl:create(param)
     elseif state.name == "menu" then
       this.state = Match:create()
       this.state:register(this)
-      print("Show the next state please!")
     else
       error("Unknown state: "..state.name)
     end

@@ -7,12 +7,16 @@ Flag.height = Flag.redImage:getData():getHeight()
 function Flag:create(x, y, team, image, posw, posh)
     local this =
     {
+        type = "flag",
         x = x,
         y = y,
         team = team,
         image = image,
         posw = posw,
-        posh = posh
+        posh = posh,
+        influence = 20,
+        influenceDist = 20,
+        influenceDecay = 1
     }
     
     function this:draw()

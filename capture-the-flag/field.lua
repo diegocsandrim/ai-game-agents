@@ -5,6 +5,13 @@ Field.width = Field.redImage:getData():getWidth()
 Field.height = Field.redImage:getData():getHeight()
 
 function Field:create(x, y, team, image, posw, posh)
+    local influence = 0 
+    if team == 1 then
+        influence = 1
+    else
+        influence = -1
+    end
+
     local this =
     {
         x = x,
@@ -12,7 +19,10 @@ function Field:create(x, y, team, image, posw, posh)
         team = team,
         image = image,
         posw = posw,
-        posh = posh
+        posh = posh,
+        influence = 1,
+        influenceDist = 1,
+        influenceDecay = 1
     }
     
     function this:draw()

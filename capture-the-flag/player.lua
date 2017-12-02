@@ -5,6 +5,13 @@ Player.width = Player.redImage:getData():getWidth()
 Player.height = Player.redImage:getData():getHeight()
 
 function Player:create(x, y, team, image, posw, posh, isBot)
+    local influence = 0 
+    if team == 1 then
+        influence = 5
+    else
+        influence = -5
+    end
+
     local this =
     {
         type = "player",
@@ -14,7 +21,11 @@ function Player:create(x, y, team, image, posw, posh, isBot)
         image = image,
         posw = posw,
         posh = posh,
-        isBot = isBot
+        isBot = isBot,
+        influence = influence,
+        influenceDist = 5,
+        influenceDecay = 1,
+        minStaticInfluence = 0
     }
     
     function this:draw()
