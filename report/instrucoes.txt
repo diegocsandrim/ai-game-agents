@@ -11,10 +11,12 @@ Verifique se ele está corretamente instalado rodando o comando love --version.
 Se a instalação foi feita com sucesso o comando returnará texto: LOVE 0.10.2 (Super Toast)
 
 2. Abra a linha de comando o vá para a pasta
-cd ai-game-agents-1.1.0
+cd ai-game-agents
 
 3.Execute a simulação
 love train
 
 4. Execute o jogo
 love capture-the-flag
+
+5. Detalhes de configuração podem ser encontrado em https://github.com/diegocsandrim/ai-game-agents

@@ -24,12 +24,6 @@ love capture-the-flag
 ```
 
 ## Train simulation
-Check for details in train [README.md](./train/README.md)
-
-## Capture the Flag game
-Check for details in capture-the-flag [README.md](./capture-the-flag/README.md)
-
-## Parametrization
 
 ### Train
 There file `./train/parameter.lua` has all available parameters for the the train simulation.
@@ -52,3 +46,6 @@ There file `./train/parameter.lua` has all available parameters for the the trai
 
 - param.influence.size.x -> width of influence map, changing this value is not currently suported
 - param.influence.size.y -> width of influence map, changing this value is not currently suported
+
+### Capture the flag
+There is no config
