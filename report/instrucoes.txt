@@ -1,0 +1,20 @@
+Instruções de como baixar o código a partir do git estão no arquivo README.md no github: https://github.com/diegocsandrim/ai-game-agents
+O guia abaixo serve para utilizar com o fonte enviado pelo stoa!
+
+Professor, foquei tempo demais no desenvolvimento da simulação do trem, e acredito que tenha fica muito boa.
+Porém quanto ao segundo trabalho tenho ciência que ficou aquém do desejado. :(
+
+Instruções!
+
+1. Instale o LÖVE: https://love2d.org/
+Verifique se ele está corretamente instalado rodando o comando love --version.
+Se a instalação foi feita com sucesso o comando returnará texto: LOVE 0.10.2 (Super Toast)
+
+2. Abra a linha de comando o vá para a pasta
+cd ai-game-agents-1.1.0
+
+3.Execute a simulação
+love train
+
+4. Execute o jogo
+love capture-the-flag
